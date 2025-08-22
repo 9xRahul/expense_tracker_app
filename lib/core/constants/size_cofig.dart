@@ -8,11 +8,11 @@ class SizeConfig {
   static late double textScaleFactor;
   static late Orientation orientation;
 
-  /// Base design sizes (change according to your design)
+  
   static const double baseWidth = 375.0;
   static const double baseHeight = 812.0;
 
-  /// Initialize once in root widget
+  
   static void initialize(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     screenWidth = mediaQuery.size.width;
@@ -23,19 +23,19 @@ class SizeConfig {
     orientation = mediaQuery.orientation;
   }
 
-  /// Scale width based on device
+  
   static double scaleWidth(double designWidth) =>
       (designWidth / baseWidth) * screenWidth;
 
-  /// Scale height based on device
+  
   static double scaleHeight(double designHeight) =>
       (designHeight / baseHeight) * screenHeight;
 
-  /// Scale font size responsively
+  
   static double scaleFontSize(double fontSize) =>
       fontSize * (screenWidth / baseWidth);
 
-  /// Padding helpers
+  
   static EdgeInsets paddingAll(double value) =>
       EdgeInsets.all(scaleWidth(value));
 
@@ -59,7 +59,7 @@ class SizeConfig {
     bottom: scaleHeight(bottom),
   );
 
-  /// Margin helpers
+  
   static EdgeInsets marginAll(double value) => paddingAll(value);
 
   static EdgeInsets marginSymmetric({
@@ -74,19 +74,19 @@ class SizeConfig {
     double bottom = 0,
   }) => paddingOnly(left: left, top: top, right: right, bottom: bottom);
 
-  /// Configurable values with named parameters
+  
   final double authLogoHeight;
   final double authLogoWidth;
 
-  // Drawer
+  
   final double drawerIconSize;
   final double drawerFontSize;
 
-  // AppBar
+  
   final double appBarIconSize;
   final double appBarFontSize;
 
-  /// Constructor with named parameters (defaults provided)
+  
   SizeConfig({
     this.authLogoHeight = 200,
     this.authLogoWidth = 200,

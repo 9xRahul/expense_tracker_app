@@ -16,19 +16,17 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorConfig.primary, // Black background
-        leading: BackButton(
-          color: ColorConfig.selectedIconColors, // White back arrow
-        ),
+        backgroundColor: ColorConfig.primary, 
+       
         title: Text(
           TextValues.search,
           style: TextStyle(
-            color: ColorConfig.selectedIconColors, // White title text
+            color: ColorConfig.selectedIconColors, 
           ),
         ),
         iconTheme: IconThemeData(
           color: ColorConfig.selectedIconColors,
-        ), // Ensures all icons are white
+        ), 
       ),
     );
   }
