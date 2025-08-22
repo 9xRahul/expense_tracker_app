@@ -1,9 +1,9 @@
 class Constants {
- static final categories = const ['Salary', 'Bonus', 'Freelance', 'Interest'];
-static final expenses = const [
+  static final categories = const ['Salary', 'Bonus', 'Freelance', 'Interest'];
+  static final expenses = const [
     'Entertainment',
     'Food',
-    'Transportation',
+    'Travel',
     'Utilities',
     'Shopping',
     'Other',

@@ -14,7 +14,6 @@ class IncomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     context.read<IncomeBloc>().add(LoadIncomes(DateTime.now()));
 
     final formKey = GlobalKey<FormState>();
@@ -24,18 +23,17 @@ class IncomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true, 
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: ColorConfig.primary,
         title: Text(
-          TextValues.summary,
+          TextValues.income,
           style: TextStyle(color: ColorConfig.selectedIconColors),
         ),
         iconTheme: IconThemeData(color: ColorConfig.selectedIconColors),
       ),
       body: BlocBuilder<IncomeBloc, IncomeState>(
         builder: (context, state) {
-          
           if (descCtrl.text != state.description) {
             descCtrl.text = state.description;
             descCtrl.selection = TextSelection.collapsed(
@@ -54,7 +52,6 @@ class IncomePage extends StatelessWidget {
               ? state.category
               : Constants.categories[0];
 
-          
           final selectedMonthStart = DateTime(
             pickedDate.year,
             pickedDate.month,
@@ -76,7 +73,6 @@ class IncomePage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                
                 Flexible(
                   fit: FlexFit.loose,
                   child: SingleChildScrollView(
@@ -192,7 +188,6 @@ class IncomePage extends StatelessWidget {
                   ),
                 ),
 
-                
                 Expanded(
                   child: Card(
                     child: Padding(
@@ -222,7 +217,6 @@ class IncomePage extends StatelessWidget {
                           const SizedBox(height: 8),
                           const Divider(height: 1),
 
-                          
                           Expanded(
                             child: filtered.isEmpty
                                 ? const Center(child: Text('No incomes yet'))

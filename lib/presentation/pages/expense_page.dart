@@ -243,7 +243,10 @@ class _ExpensePageState extends State<ExpensePage> {
                               context.read<ExpenseBloc>().add(
                                 AddExpenseEvent(entry),
                               );
-                              context.read<ExpenseBloc>().add(ResetAllValues());
+                              _subCtrl.text = "";
+                              _descCtrl.text = "";
+                              _amountCtrl.text = "";
+                              _limitAmountCtrl.text = "";
                             },
                             child: const Text('Add Expense'),
                           ),

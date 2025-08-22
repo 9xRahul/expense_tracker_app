@@ -23,8 +23,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     on<ExecuteSearch>(_executeSearch);
   }
 
-  
-
   Future<void> _loadExpenses(
     LoadExpenses event,
     Emitter<ExpenseState> emit,
@@ -111,6 +109,19 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   }
 
   void _resetAllValues(ResetAllValues event, Emitter<ExpenseState> emit) {
-    emit(ExpenseState.initial());
+    emit(
+      state.copyWith(
+        expenses: [],
+        limits: [],
+        error: null,
+        warning: null,
+        searchDescription: '',
+        searchCategory: '',
+        searchFrom: null,
+        searchTo: null,
+        searchAscending: false,
+        searchResults: [],
+      ),
+    );
   }
 }

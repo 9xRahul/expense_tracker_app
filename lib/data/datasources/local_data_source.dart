@@ -8,7 +8,6 @@ class LocalDataSource {
   final Database db;
   LocalDataSource(this.db);
 
-  
   Future<int> addIncome(IncomeEntry e) async {
     return db.insert('incomes', e.toJson());
   }
@@ -25,7 +24,6 @@ class LocalDataSource {
     return rows.map((e) => IncomeEntry.fromJson(e)).toList();
   }
 
-  
   Future<int> addExpense(ExpenseEntry e) async {
     return db.insert('expenses', e.toJson());
   }
@@ -60,33 +58,45 @@ class LocalDataSource {
     DateTime? to,
     bool ascending = false,
   }) async {
-    final where = [];
-    final args = [];
+    final where = <String>[];
+    final args = <Object?>[];
 
-    if (description != null && description.isNotEmpty) {
-      where.add('description LIKE ?');
-      args.add('%$description%');
+    // Description: NULL-safe + case-insensitive
+    if (description != null && description.trim().isNotEmpty) {
+      where.add("(IFNULL(description, '') LIKE ? COLLATE NOCASE)");
+      args.add('%${description.trim()}%');
     }
-    if (category != null && category.isNotEmpty) {
-      where.add('category = ?');
-      args.add(category);
+
+    // Category exact match (skip if empty)
+    if (category != null && category.trim().isNotEmpty) {
+      where.add("category = ?");
+      args.add(category.trim());
     }
-    if (from != null && to != null) {
-      where.add('date BETWEEN ? AND ?');
-      args.add(DateValidators.yMd(from));
-      args.add(DateValidators.yMd(to));
+
+    // Date range: allow single-bound filters too
+    if (from != null) {
+      where.add("date >= ?");
+      args.add(DateValidators.yMd(from)); // must be 'YYYY-MM-DD'
     }
+    if (to != null) {
+      where.add("date <= ?");
+      args.add(DateValidators.yMd(to)); // must be 'YYYY-MM-DD'
+    }
+
+    // Stable sort: date then id
+    final ord =
+        "date ${ascending ? 'ASC' : 'DESC'}, id ${ascending ? 'ASC' : 'DESC'}";
 
     final rows = await db.query(
       'expenses',
       where: where.isEmpty ? null : where.join(' AND '),
       whereArgs: args.isEmpty ? null : args,
-      orderBy: 'date ${ascending ? 'ASC' : 'DESC'}',
+      orderBy: ord,
     );
+
     return rows.map((e) => ExpenseEntry.fromJson(e)).toList();
   }
 
-  
   Future<void> upsertLimit(CategoryLimit limit) async {
     await db.insert(
       'category_limits',
