@@ -32,6 +32,8 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
     LoadSummary event,
     Emitter<SummaryState> emit,
   ) async {
+    emit(state.copyWith(loading: true));
+
     final List<ExpenseEntry> expenses = await expenseRepo.getExpenses(
       month: event.month,
     );
@@ -66,6 +68,7 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
         totalIncome: totalIncome,
         categoryExpense: byCategory,
         sections: sections,
+        loading: false,
       ),
     );
   }
@@ -175,8 +178,7 @@ List<PieChartSectionData> _buildPieSections(Map<String, double> byCategory) {
     final MapEntry<String, double> e = ordered[i];
     final Color color =
         ColorConfig.pidiagramColors[i % ColorConfig.pidiagramColors.length];
-    final Color textColor =
-        ColorConfig.pidiagramColors[i + 3 % ColorConfig.pidiagramColors.length];
+    final Color textColor = Color(0xFF000000);
 
     sections.add(
       PieChartSectionData(

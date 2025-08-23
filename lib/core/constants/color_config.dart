@@ -7,15 +7,14 @@ class ColorConfig {
 
   static Color selectedIconColors = Colors.white;
   static Color unSelectedIconColors = Colors.grey;
-
-  static List pidiagramColors = [
-    Colors.blue,
-    Colors.red,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.teal,
-    Colors.brown,
-    Colors.indigo,
+  static List<Color> pidiagramColors = [
+    Colors.lightBlueAccent, // Bright Light Blue
+    Colors.redAccent.shade100, // Bright Light Red/Pink
+    Colors.lightGreenAccent, // Bright Light Green
+    Colors.orangeAccent.shade100, // Bright Light Orange
+    Colors.purpleAccent.shade100, // Bright Light Purple
+    Colors.tealAccent.shade100, // Bright Light Teal
+    Colors.amberAccent.shade100, // Bright Yellow-Orange
+    Colors.indigoAccent.shade100, // Bright Indigo
   ];
 }

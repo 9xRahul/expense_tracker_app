@@ -132,20 +132,40 @@ class IncomePage extends StatelessWidget {
                               const Spacer(),
                               TextButton(
                                 onPressed: () async {
-                                  final picked = await showDatePicker(
-                                    context: context,
-                                    initialDate: pickedDate,
-                                    firstDate: DateTime(
-                                      DateTime.now().year,
-                                      DateTime.now().month,
-                                      1,
-                                    ),
-                                    lastDate: DateTime(
-                                      DateTime.now().year,
-                                      DateTime.now().month + 1,
-                                      0,
-                                    ),
+                                  final DateTime now = DateTime.now();
+                                  final DateTime monthStart = DateTime(
+                                    now.year,
+                                    now.month,
+                                    1,
                                   );
+                                  final DateTime today = DateTime(
+                                    now.year,
+                                    now.month,
+                                    now.day,
+                                  );
+
+                                  DateTime safeInitial = pickedDate;
+                                  if (safeInitial.isBefore(monthStart)) {
+                                    safeInitial = monthStart;
+                                  }
+                                  if (safeInitial.isAfter(today)) {
+                                    safeInitial = today;
+                                  }
+
+                                  final DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: safeInitial,
+                                    firstDate: monthStart,
+                                    lastDate: today,
+                                    selectableDayPredicate: (d) {
+                                      final bool sameMonth =
+                                          (d.year == now.year &&
+                                          d.month == now.month);
+                                      final bool notFuture = !d.isAfter(today);
+                                      return sameMonth && notFuture;
+                                    },
+                                  );
+
                                   if (picked != null) {
                                     context.read<IncomeBloc>().add(
                                       IncomeSetDate(picked),

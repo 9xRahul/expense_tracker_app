@@ -88,7 +88,6 @@ class _SummaryPageState extends State<SummaryPage> {
                 ),
                 const SizedBox(height: 16),
 
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -123,14 +122,15 @@ class _SummaryPageState extends State<SummaryPage> {
 
                 const SizedBox(height: 12),
 
-                
                 Builder(
                   builder: (context) {
                     if (state.sections.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 24),
-                          child: Text('No expenses so far in this period'),
+                          child: state.loading
+                              ? CircularProgressIndicator()
+                              : Text('No expenses so far in this period'),
                         ),
                       );
                     }
