@@ -7,8 +7,20 @@ import '../../core/utils/date_utils.dart';
 import '../bloc/expense/expense_bloc.dart';
 
 @RoutePage()
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
+
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<ExpenseBloc>().add(ExecuteSearch());
+  }
 
   @override
   Widget build(BuildContext context) {

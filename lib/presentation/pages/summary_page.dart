@@ -1,11 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:collection/collection.dart';
 import 'package:expense_tracker_app/core/constants/color_config.dart';
 import 'package:expense_tracker_app/core/constants/text_values.dart';
+import 'package:expense_tracker_app/core/constants/variables.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/entities/expense_entry.dart';
 import '../bloc/summary/summary_bloc.dart';
 
 @RoutePage()
@@ -27,7 +26,6 @@ class _SummaryPageState extends State<SummaryPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConfig.primary,
-
         title: Text(
           TextValues.summary,
           style: TextStyle(color: ColorConfig.selectedIconColors),
@@ -36,7 +34,9 @@ class _SummaryPageState extends State<SummaryPage> {
       ),
       body: BlocBuilder<SummaryBloc, SummaryState>(
         builder: (context, state) {
-          final recent = state.expenses.take(10).toList();
+          final List recent = state.expenses.length > 10
+              ? state.expenses.sublist(0, 10)
+              : state.expenses;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -44,54 +44,116 @@ class _SummaryPageState extends State<SummaryPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Card(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Text('Income'),
-                        Text('₹${state.totalIncome.toStringAsFixed(2)}'),
-                      ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          const Text('Income'),
+                          Text('₹${state.totalIncome.toStringAsFixed(2)}'),
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Card(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Text('Expence'),
-                        Text('₹${state.totalExpense}'),
-                      ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          const Text('Expence'),
+                          Text('₹${state.totalExpense}'),
+                        ],
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 8),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          const Text('Savings'),
+                          Text(
+                            '₹${(state.totalIncome - state.totalExpense).toStringAsFixed(2)}',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-                const SizedBox(height: 8),
-                Card(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Text('Savings'),
-                        Text(
-                          '₹${(state.totalIncome - state.totalExpense).toStringAsFixed(2)}',
+                
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Show by',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    DropdownButton<SummaryRange>(
+                      value: state.range,
+                      onChanged: (v) {
+                        if (v != null) {
+                          context.read<SummaryBloc>().add(SetSummaryRange(v));
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                          value: SummaryRange.monthly,
+                          child: Text('Monthly'),
+                        ),
+                        DropdownMenuItem(
+                          value: SummaryRange.weekly,
+                          child: Text('Weekly'),
+                        ),
+                        DropdownMenuItem(
+                          value: SummaryRange.daily,
+                          child: Text('Daily'),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
 
-                const SizedBox(height: 16),
-                state.sections.isEmpty
-                    ? const Center(
-                        child: Text('No expenses so far in this month'),
-                      )
-                    : SizedBox(
-                        height: 260,
-                        child: PieChart(PieChartData(sections: state.sections)),
+                const SizedBox(height: 12),
+
+                
+                Builder(
+                  builder: (context) {
+                    if (state.sections.isEmpty) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Text('No expenses so far in this period'),
+                        ),
+                      );
+                    }
+                    return SizedBox(
+                      height: 260,
+                      child: PieChart(
+                        PieChartData(
+                          sections: state.sections,
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 32,
+                        ),
                       ),
+                    );
+                  },
+                ),
+
                 const SizedBox(height: 24),
                 Text(
                   state.sections.isEmpty ? "" : 'Recent Expenses',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
 
@@ -101,10 +163,12 @@ class _SummaryPageState extends State<SummaryPage> {
                   itemCount: recent.length,
                   itemBuilder: (context, index) {
                     final e = recent[index];
-                    final title =
-                        e.subCategory == null || e.subCategory!.isEmpty
-                        ? e.category
-                        : '${e.category} • ${e.subCategory}';
+                    final String title;
+                    if (e.subCategory == null || e.subCategory.isEmpty) {
+                      title = e.category;
+                    } else {
+                      title = '${e.category} - ${e.subCategory}';
+                    }
                     return ListTile(
                       leading: const Icon(Icons.payments),
                       title: Text(title),
@@ -113,7 +177,6 @@ class _SummaryPageState extends State<SummaryPage> {
                     );
                   },
                 ),
-
                 const SizedBox(height: 16),
               ],
             ),

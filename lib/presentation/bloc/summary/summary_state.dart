@@ -9,6 +9,8 @@ class SummaryState extends Equatable {
   final Map<String, double> categoryExpense;
   List<PieChartSectionData> sections;
 
+  final SummaryRange range;
+
   SummaryState({
     required this.month,
     required this.expenses,
@@ -17,6 +19,7 @@ class SummaryState extends Equatable {
     required this.totalIncome,
     required this.categoryExpense,
     required this.sections,
+    required this.range,
   });
 
   factory SummaryState.initial() => SummaryState(
@@ -27,6 +30,7 @@ class SummaryState extends Equatable {
     totalIncome: 0,
     categoryExpense: Map(),
     sections: const [],
+    range: SummaryRange.monthly,
   );
 
   SummaryState copyWith({
@@ -37,6 +41,7 @@ class SummaryState extends Equatable {
     double? totalIncome,
     Map<String, double>? categoryExpense,
     List<PieChartSectionData>? sections,
+    SummaryRange? range,
   }) => SummaryState(
     month: month ?? this.month,
     expenses: expenses ?? this.expenses,
@@ -45,6 +50,7 @@ class SummaryState extends Equatable {
     totalIncome: totalIncome ?? this.totalIncome,
     categoryExpense: categoryExpense ?? this.categoryExpense,
     sections: sections ?? this.sections,
+    range: range ?? this.range,
   );
 
   @override
@@ -56,5 +62,6 @@ class SummaryState extends Equatable {
     totalIncome,
     categoryExpense,
     sections,
+    range,
   ];
 }

@@ -9,3 +9,5 @@ class Constants {
     'Other',
   ];
 }
+
+enum SummaryRange { monthly, weekly, daily }

@@ -243,6 +243,11 @@ class _ExpensePageState extends State<ExpensePage> {
                               context.read<ExpenseBloc>().add(
                                 AddExpenseEvent(entry),
                               );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Expense added successfully'),
+                                ),
+                              );
                               _subCtrl.text = "";
                               _descCtrl.text = "";
                               _amountCtrl.text = "";
@@ -255,12 +260,14 @@ class _ExpensePageState extends State<ExpensePage> {
                     ),
 
                     const SizedBox(height: 16),
-
                     Form(
                       key: _limitFormKey,
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Category dropdown
                           Expanded(
+                            flex: 2,
                             child: DropdownButtonFormField<String>(
                               key: _limitCategoryFieldKey,
                               decoration: const InputDecoration(
@@ -278,7 +285,10 @@ class _ExpensePageState extends State<ExpensePage> {
                             ),
                           ),
                           const SizedBox(width: 12),
+
+                          // Limit amount input
                           Expanded(
+                            flex: 2,
                             child: TextFormField(
                               controller: _limitAmountCtrl,
                               keyboardType: TextInputType.number,
@@ -291,37 +301,43 @@ class _ExpensePageState extends State<ExpensePage> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (!_limitFormKey.currentState!.validate())
-                                return;
 
-                              final limitCategory =
-                                  _limitCategoryFieldKey.currentState?.value ??
-                                  _categories.first;
-                              final limitAmount =
-                                  double.tryParse(
-                                    _limitAmountCtrl.text.trim(),
-                                  ) ??
-                                  0.0;
+                          // Button (shrink-wrapped instead of Expanded)
+                          SizedBox(
+                            height: 48, // matches TextFormField height
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (!_limitFormKey.currentState!.validate())
+                                  return;
 
-                              final limit = CategoryLimit(
-                                category: limitCategory,
-                                monthlyLimit: limitAmount,
-                              );
-                              context.read<ExpenseBloc>().add(
-                                UpsertLimitEvent(limit),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Limit saved')),
-                              );
-                            },
-                            child: const Text('Save Limit'),
+                                final limitCategory =
+                                    _limitCategoryFieldKey
+                                        .currentState
+                                        ?.value ??
+                                    _categories.first;
+                                final limitAmount =
+                                    double.tryParse(
+                                      _limitAmountCtrl.text.trim(),
+                                    ) ??
+                                    0.0;
+
+                                final limit = CategoryLimit(
+                                  category: limitCategory,
+                                  monthlyLimit: limitAmount,
+                                );
+                                context.read<ExpenseBloc>().add(
+                                  UpsertLimitEvent(limit),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Limit saved')),
+                                );
+                              },
+                              child: const Text('Save'),
+                            ),
                           ),
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 16),
 
                     Card(
