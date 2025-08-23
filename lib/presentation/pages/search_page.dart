@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:expense_tracker_app/core/constants/color_config.dart';
 import 'package:expense_tracker_app/core/constants/text_values.dart';
+import 'package:expense_tracker_app/core/constants/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/utils/date_utils.dart';
@@ -26,16 +27,6 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     final descCtrl = TextEditingController();
 
-    const categories = <String>[
-      'All',
-      'Entertainment',
-      'Food',
-      'Transportation',
-      'Utilities',
-      'Shopping',
-      'Other',
-    ];
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConfig.primary,
@@ -57,7 +48,7 @@ class _SearchPageState extends State<SearchPage> {
             }
 
             final selectedCategoryValue = state.searchCategory.isEmpty
-                ? 'All'
+                ? Constants.expenses.first
                 : state.searchCategory;
 
             return ListView(
@@ -75,11 +66,14 @@ class _SearchPageState extends State<SearchPage> {
                 const SizedBox(height: 12),
 
                 DropdownButtonFormField<String>(
-                  value: selectedCategoryValue,
+                  value: selectedCategoryValue.isEmpty
+                      ? Constants.expenses.first
+                      : selectedCategoryValue,
                   decoration: const InputDecoration(
                     labelText: 'Filter by category',
                   ),
-                  items: categories
+                  items: Constants
+                      .expenses // include "All"
                       .map(
                         (c) =>
                             DropdownMenuItem<String>(value: c, child: Text(c)),
@@ -161,24 +155,33 @@ class _SearchPageState extends State<SearchPage> {
                   },
                 ),
 
-                ElevatedButton(
-                  onPressed: () =>
-                      context.read<ExpenseBloc>().add(ExecuteSearch()),
-                  child: const Text('Search'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () =>
+                          context.read<ExpenseBloc>().add(ExecuteSearch()),
+                      child: const Text('Search'),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 12),
 
-                Column(
-                  children: state.searchResults.map((e) {
-                    return ListTile(
-                      leading: const Icon(Icons.payments),
-                      title: Text('${e.category} ${e.subCategory ?? ""}'),
-                      subtitle: Text('${e.description ?? ""} • ${e.date}'),
-                      trailing: Text('₹${e.amount.toStringAsFixed(2)}'),
-                    );
-                  }).toList(),
-                ),
+                state.searchResults.isEmpty
+                    ? Text("No Expences for secleted critetia")
+                    : Column(
+                        children: state.searchResults.map((e) {
+                          return ListTile(
+                            leading: const Icon(Icons.payments),
+                            title: Text('${e.category} ${e.subCategory ?? ""}'),
+                            subtitle: Text(
+                              '${e.description ?? ""} • ${e.date}',
+                            ),
+                            trailing: Text('₹${e.amount.toStringAsFixed(2)}'),
+                          );
+                        }).toList(),
+                      ),
               ],
             );
           },

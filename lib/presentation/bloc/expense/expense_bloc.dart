@@ -108,15 +108,18 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     emit(state.copyWith(searchResults: results, error: null));
   }
 
-  void _resetAllValues(ResetAllValues event, Emitter<ExpenseState> emit) {
+  void _resetAllValues(ResetAllValues event, Emitter<ExpenseState> emit) async {
+    final list = await expenseRepo.getExpenses(month: event.month);
+    final limits = await limitRepo.getAllLimits();
+
     emit(
       state.copyWith(
-        expenses: [],
-        limits: [],
+        expenses: list,
+        limits: limits,
         error: null,
         warning: null,
         searchDescription: '',
-        searchCategory: '',
+        searchCategory: "All",
         searchFrom: null,
         searchTo: null,
         searchAscending: false,

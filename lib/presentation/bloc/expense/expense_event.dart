@@ -42,6 +42,9 @@ class UpdateSearchFilters extends ExpenseEvent {
 class ExecuteSearch extends ExpenseEvent {}
 
 class ResetAllValues extends ExpenseEvent {
+  final DateTime month;
+
+  ResetAllValues({required this.month});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [month];
 }
